@@ -1,0 +1,149 @@
+Sub HomeWorkWeek2()
+
+ 'variables
+ 
+  Dim Last_Row As Long
+  Dim total As Double
+  Dim ticker As String
+  Dim summary_table_row As Integer
+  Dim first_close As Double
+  Dim last_close As Double
+  Dim yearly_change As Double
+  Dim percentage As Double
+  Dim first_row As Double
+  Dim WS_Count As Integer
+  Dim sht As Worksheet
+  Dim LoopColorChange As Double
+  Dim GreatestPercentageIncrease As Double
+  Dim GreatestPercentageDecrease As Double
+  Dim GreatestTotalVol As Double
+  Dim GreatestPercentageIncreaseTicker As String
+  Dim GreatestPercentageDecreaseTicker As String
+  Dim GreatestTotalVolTicker As String
+  
+
+  
+' Set WS_Count equal to the number of worksheets in the active workbook.
+WS_Count = ActiveWorkbook.Worksheets.Count
+For i = 1 To WS_Count
+
+    Worksheets(i).Activate
+    'Will run inside of loop through sheets
+    Last_Row = Cells(Rows.Count, "A").End(xlUp).Row
+    summary_table_row = 2
+    first_row = 2
+    Range("J1").Value = "Ticker"
+    Range("M1").Value = "Volume"
+    Range("K1").Value = "Percentage Change"
+    Range("L1").Value = "Yearly Change"
+    Range("Q1").Value = "Ticker"
+    Range("P2").Value = "Greatest % Increase"
+    Range("P3").Value = "Greatest % Decrease"
+    Range("P4").Value = "Greatest Total Volume"
+    Range("R1").Value = "Value"
+    GreatestPercentageIncrease = 0
+    GreatestPercentageDecrease = 0
+    GreatestTotalVol = 0
+     GreatestPercentageIncreaseTicker = ""
+    GreatestPercentageDecreaseTicker = ""
+    GreatestTotalVolTicker = ""
+    
+    
+    ' Loop through all volume
+    For J = 2 To Last_Row
+    ' Check if we are still within the same ticker symbol
+    If Cells(J + 1, 1).Value <> Cells(J, 1).Value Then
+      ' Message Box the unique Bank Name
+      'MsgBox (Cells(i, 1).Value)
+        ' Set the Brand name
+      ticker = Cells(J, 1).Value
+      ' Add to the Brand Total
+      total = total + Cells(J, 7).Value
+      first_close = Cells(first_row, 6).Value
+      last_close = Cells(J, 6).Value
+      yearly_change = last_close - first_close
+      If (first_close = 0) Then
+      percentage = 0
+      Else:
+        percentage = Round(yearly_change / first_close, 2)
+      End If
+      
+      
+      
+      ' Print the Credit Card Brand in the Summary Table
+      Range("J" & summary_table_row).Value = ticker
+      ' Print the Brand Amount to the Summary Table
+      Range("M" & summary_table_row).Value = total
+      ' Print the Brand Amount to the Summary Table
+      Range("L" & summary_table_row).Value = yearly_change
+      If yearly_change > 0 Then
+       
+       ' Color code outcome
+       
+        Cells(summary_table_row, 12).Interior.Color = vbGreen
+      
+      ElseIf yearly_change < 0 Then
+      
+        Cells(summary_table_row, 12).Interior.Color = vbRed
+      
+      End If
+      
+      'getting greatest change in data
+      
+      If percentage > GreatestPercentageIncrease Then
+      
+       GreatestPercentageIncrease = percentage
+       
+         GreatestPercentageIncreaseTicker = ticker
+       
+    
+       End If
+       
+       If percentage < GreatestPercentageDecrease Then
+       
+       GreatestPercentageDecrease = percentage
+        
+        GreatestPercentageDecreaseTicker = ticker
+       
+       End If
+       
+       If total > GreatestTotalVol Then
+        
+       
+       GreatestTotalVol = total
+       
+       GreatestTotalVolTicker = ticker
+       
+       End If
+       
+       
+       Range("K" & summary_table_row).Value = percentage
+      ' Add one to the summary table row
+      summary_table_row = summary_table_row + 1
+      first_row = J + 1
+      ' Reset the Brand Total
+      total = 0
+     Else
+     total = Cells(J, 7).Value + total
+    End If
+    Next J
+    
+     ' data result location
+        Cells(2, 18).Value = GreatestPercentageIncrease
+        Cells(3, 18).Value = GreatestPercentageDecrease
+        Cells(4, 18).Value = GreatestTotalVol
+        Cells(2, 17).Value = GreatestPercentageIncreaseTicker
+        Cells(3, 17).Value = GreatestPercentageDecreaseTicker
+        Cells(4, 17).Value = GreatestTotalVolTicker
+        
+        
+    
+        
+        
+    'add conditional formatting
+     'ActiveSheet.Next.Activate
+    Next i
+    
+   
+        
+End Sub
